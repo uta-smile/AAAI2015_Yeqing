@@ -1,0 +1,48 @@
+function runMVSC
+
+addpath func
+
+for dbID = 6
+
+load('handwritten6')
+dbname = 'handwritten';
+T = data;
+gnd = labels;
+r = 10.^0.7;
+
+nc = length(unique(gnd));
+
+% opts.p = 200;
+opts.p = 200;
+opts.r = 5;
+opts.kmMaxIter = 30;
+opts.maxWghtIter = 50;
+% opts.wr = 0;
+opts.thresh = 1e-6;
+opts.kertype = 'Gaussian';
+if dbID == 2,
+    opts.kertype = 'Linear';
+end
+
+rand('twister',5489)
+
+%===================================================================
+% Experiment
+%***** Bipartite clustering compute all results
+T = T(1);
+[mFBase mP mR mNMI mRI mPrt mAC mTime] = deal([]);
+maxiter = 5; 
+
+for i = 1:maxiter,
+    i
+    opts.wr = r;
+    tidID = tic;
+    [res, markslbl, marks, obj, Zv, alpha] = MVSC(T, nc, opts);
+    if min(res) ==0, res = res + 1; end
+    elapseTime = toc(tidID);
+    res = bestMap(gnd,res);
+    AC = length(find(gnd == res))/length(gnd)
+end
+
+end
+
